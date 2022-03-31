@@ -2,7 +2,7 @@
 title: "Multivariate Analysis Workshop"
 author: "R. Alex Thompson & Madeline Franz"
 date: "3/1/2022"
-output: word_document
+output: pdf_document
 ---
 
 Welcome to the Multivariate Statistics in Ecology and Earth Sciences Workshop 2022. The central aims of this workshop are: (i) introduce attendees to the basic principles behind various multivariate methods, (ii) outline a general strategy for deciding if a multivariate approach is best for your data, and (iii) work through examples of multivariate analysis in R, providing sample code and data for future exploration and learning.  
