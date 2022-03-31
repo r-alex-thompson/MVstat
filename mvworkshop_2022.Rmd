@@ -20,6 +20,7 @@ Let us start by first exploring the _iris_ dataset, so that we may develop a mor
 
 ```{r open dataset}
 library(tidyverse) # a majority of the code in this tutorial will be based in the tidyverse
+library(flextable) # this is a good package for making nice tables but feel free to use whatever you like
 iris<-iris # load the data that comes with R
 iris # view the data
 ```
@@ -133,16 +134,22 @@ Let's dive in.
   
 ``` {r PCA}
 library(tidyverse)
+library(ggbiplot)
+
+# let's start by creating a new working directory wherever you have your data stored
+setwd("") # insert the name of your directory into the quotations and run this line
+
 # let's load in all of the data
-pd<-read.csv("/Users/alexthompson/Dropbox/PhD data/Stats stuff/Matt Tomaszewski/wrc/masterpd.csv")%>%
+pd<-read.csv("masterpd.csv")%>%
   dplyr::mutate(psipd=abs(psipd))%>%
   dplyr::mutate(psimd=abs(psimd))
-leaf<-read.csv("/Users/alexthompson/Dropbox/PhD data/Stats stuff/Matt Tomaszewski/wrc/leaftraits.csv")
-elements<-read.csv("/Users/alexthompson/Dropbox/PhD data/Stats stuff/Matt Tomaszewski/wrc/CN.csv")
+leaf<-read.csv("leaftraits.csv")
+elements<-read.csv("CN.csv")
 
 # run the PCA on just the water potential data
-pd_pca<-prcomp(pd[3:6],center=TRUE,scale.=TRUE)
-pd_summary<-as.data.frame(summary(pd_pca)$importance) #69% of the dat
+pd_pca<-prcomp(pd[3:6],center=TRUE,scale.=TRUE) # runs the PCA on selected columns (MUST BE NUMERIC)
+# center and scale terms must be true in order to account for different data types
+pd_summary<-as.data.frame(summary(pd_pca)$importance) 
 group<-pd$Group
 pd_plot<-ggbiplot(pd_pca,ellipse=TRUE,groups=group)
 
@@ -165,12 +172,10 @@ all<-merge(lpd,elements)%>%
   dplyr::rename(LMA=lma)%>%
   dplyr::rename("Al:As"=huber)
 all_pca<-prcomp(all[8:13],center=TRUE,scale.=TRUE)
-all_summary<-as.data.frame(summary(all_pca)$importance) # 65% with 2; 79% with 3!
-group<-all$Microsite
-all_plot12<-ggbiplot(all_pca,choices=1:2,ellipse=TRUE,groups=group)
-all_plot13<-ggbiplot(all_pca,choices=c(1,3),ellipse=TRUE,groups=group)
-all_plot14<-ggbiplot(all_pca,choices=c(1,4),ellipse=TRUE,groups=group)
-all_plot15<-ggbiplot(all_pca,choices=c(1,5),ellipse=TRUE,groups=group)
+all_summary<-as.data.frame(summary(all_pca)$importance) # 65% with 2
+all_rotation<-as.data.frame(all_pca$rotation)
+rownames(all_rotation) <- rownames(all_pca$rotation)
+
 
 # obviously adding more variables isn't making things better
 # let's look at the elemental analysis alone
@@ -180,11 +185,21 @@ group<-elements$Group
 elmnt_plot<-ggbiplot(elmnt_pca,ellipse=TRUE,groups=group)
 
 
-# it looks like the PCA on uncorrelated variables is best
+# it looks like the PCA on uncorrelated variables is best 
+# the secrete lies with eigenvalues - highly correlated variables tend to have very small eigenvalues
 # let's make a table and inspect it a little bit
-allpca_kab<-kbl(all_pca$rotation,align='c',table.attr = "style = \"color: black;\"",caption="Predawn, Leaf, & Element Traits",digits=2)%>%
-    kable_classic(full_width = T, html_font = "Cambria")%>%
-    kable_styling(font_size = 20)
+all_rotation<-all_rotation%>%
+  rownames_to_column()%>%
+  dplyr::rename(Variable=rowname)
+
+allpca_tab<-flextable(all_rotation)
+
+
+# let's plot the results and see what it looks like
+
+group<-all$Microsite
+all_plot12<-ggbiplot(all_pca,choices=1:2,ellipse=TRUE,groups=group)
+
 
 ```
   
