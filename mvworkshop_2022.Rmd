@@ -1,0 +1,200 @@
+---
+title: "Multivariate Analysis Workshop"
+author: "R. Alex Thompson & Madeline Franz"
+date: "3/1/2022"
+output: word_document
+---
+
+Welcome to the Multivariate Statistics in Ecology and Earth Sciences Workshop 2022. The central aims of this workshop are: (i) introduce attendees to the basic principles behind various multivariate methods, (ii) outline a general strategy for deciding if a multivariate approach is best for your data, and (iii) work through examples of multivariate analysis in R, providing sample code and data for future exploration and learning.  
+  
+__Overview of Multivariate Analysis and Multivariate Data__  
+  
+__Why Multivariate Analysis__  
+  
+__When To Use Multivariate Analysis (and When Not To)__
+  
+__How to use Multivariate Analysis__  
+In this tutorial, we will introduce you to four methods used in multivariate statistics: Canonical Correlation, Clustering Algorithms, Classification, and Ordination (Principal Components Analysis). In order to illustrate these techniques in the simplest way, we have chosen to use the infamous _iris_ dataset provided in RStudio. This dataset, while simple, is very well-behaved. While we seldom have well-behaved data in practice, this makes teaching multivariate methods much easier. Not only will the basic principles of multivariate analysis become more clear, but our ability to make conclusions will be simplified. This is in line with aim (i), and is the motivating aim of this tutorial.    
+  
+Let us start by first exploring the _iris_ dataset, so that we may develop a more intuitive sense of the project at hand.
+
+```{r open dataset}
+library(tidyverse) # a majority of the code in this tutorial will be based in the tidyverse
+iris<-iris # load the data that comes with R
+iris # view the data
+```
+  
+Now, if we inspect our data we see that it contains 150 observations over just 5 variables, one of them being categorical. This is great, because when $n \gt\gt p$, computation is greatly simplified.  
+  
+Let us first consider the scenario where we collect this data with the goal of interrogating relationships between the variables, grouping of variables, and the species. There's a lot to unpack here. First, we could simply run linear (or nonlinear) regression models on each pair of variables separately, giving six unique figures and statistical outputs. That's not to mention if we decide to group by species, which further complicates things. In reality, most of our data contains variables that are correlated. A motivating example is climate data, where temperature, precipitation, and VPD can all interact. Clearly, this is not preferable since correlations between variables can lead to unnecessarily large p, make prediction more difficult, and may lead to overfitting.  
+  
+Let us check for correlations in our data.  
+  
+```{r check for correlations}
+cor(iris[1:4])
+```
+  
+It appears that most of our variables are correlated, which limits what may include in a regression model. However, what if we want to test how a set of multiple variables correlates with another set of multiple variables? In mathematical terms, we split our data into two (not necessarily equally sized!) matrices: $\textbf{p}_1$ and $\textbf{p}_2$. Although the number of variables in each of the $\textbf{p}_i$ matrices can be unequal, the number of observations must be equal for the analysis to work.  
+  
+We are now ready to introduce our first technique, _Canonical Correlation_. INSERT INFO ABOUT CANONICAL CORR.
+  
+Before we can do anything, however, it's best to scale and center our data. What does this mean? In short, if some of our variables have more variance than others, or are measured at a different scale (i.e. values are in the 100s versus 10s), this can create issues with multivariate techniques. A fundamental component of any multivariate analysis is the concept of distance. If one variable has greater variance than the other variables, it is likely that your results will be strongly influenced by this single variable. Obviously, this is bad. To correct for this we can use R's built in scale and center functions to give our data unit variance - essentially homogenizing the variance of each column so that they are equally weighted in the calculations.  
+  
+``` {r scale and center}
+
+```
+  
+``` {r canonical correlation}
+
+```
+  
+Often, we want to group our data. While grouping can be done a priori during the data collection process (i.e. treatments, sites, etc.), sometimes we don't know what the groups are. There are two general approaches associated with post hoc grouping: _Clustering_ and _Classification_.  
+  
+Let's start with Classification. INSERT INFO ABOUT CLASSIFICATION.  
+  
+``` {r classification}
+
+```
+  
+Clearly, _Classification_ requires some a priori knowledge about our data. Furthermore, it's strength comes in classifying _new_ observations. But what if we don't have new observations and we just want to group our existing observations? Well, this is where _Clustering_ algorithms can help. Clustering algorithms are highly effective mathematical tools that leverage concepts of distance between points in multiple dimensions ($p\ge1$) to find the best groups. Sometimes our data makes this easy. Sometimes it is not.  
+  
+There are many different algorithms that can be used in clustering. These include hierarchical methods like single linkage or average linkage. What we're going to cover here is the k-means algorithm which is widely used across many fields. The basic idea is to imagine a moving window across all of your data points. This window is calculating the distance between points and clustering them based on minimum distances. Essentially, you specify k clusters (k = 1, 2, 3, etc.) and run the algorithm. The distance of each observation is compared the average distance of each of the k clusters. The points in each cluster are shuffled based on this algorithm until the within-cluster distance is minimized while the between-cluster distance is maximized. The basic idea is this: group observations in such a way that a maximum amount of the variance in the dataset is captured within a minimum number of groups. 
+  
+Let us take the _iris_ data make an attempt at clustering it.
+  
+``` {r clustering}
+k2<-kmeans(iris[1:4],centers=2) # run the kmeans algorithm included in R
+# first we specify the data where the [1:4] command specifies which columns to evaluate
+# the centers command is where we specify the number of clusters 
+k2 # let's look at our clusters
+# just two clusters capture 77% of the variance in the data. That's pretty good!
+k3<-kmeans(iris[1:4],centers=3) # let's try 3 clusters to see if we can improve our results
+k3 # looking at our results 
+# we get marginal improvement, increasing the variance explained by two percentage points
+# given the tradeoff, it seem slike k=2 clusters is probably best
+# recall: we want to maximize variance explained in the fewest number of clusters
+
+# now we want to update our original dataset to reflect these clusters
+group<-k2$cluster # let's isolate the vector that defines which observations belong in which cluster
+iris2<-cbind(iris,group) # combine the original data with the cluster vector
+iris2$group<-as.factor(iris2$group)
+
+# now we want to explore things a big more. 
+# we know that there are 3 groups in our data: the 3 species
+# Do we have patterns in how our clusters are grouped? 
+# let's make a figure to visualize this clustering
+library(ggplot2) # we'll use ggplot to make figures
+group_fig<-ggplot(iris2,aes(Species,fill=group)) + geom_bar()
+# we can see pretty clearly now that all of the setosa and virginica species are classified into separate groups
+# it looks like versicolor, however, is split between clusters
+# this warrants further investigation
+# let's extract our cluster centers for each variable, and inspect what makes our clusters different
+centers<-k2$centers # extract the centers
+centers # view the centers
+# group 1 can be described as having longer sepals, and overall larger petals
+# group 2 has shorter sepals that are more wide, with much smaller petals than group 2
+# so, perhaps our versicolor species that were classified as group 2 were simply outliers
+# let's move on to PCA, and see how we can apply these clusters in a more interesting way that let's us compare them in more detail. 
+```
+  
+The essential goal of most multivariate methods is to try and reduce the dimensionality of our data in a manner that let's us make sense of it. As humans, we cannot even visualize dimensions greater than 3, let alone explain it. We've developed incredible tools that leverage theorems from linear algebra to reduce matrices of multiple dimensions into a smaller subset of dimensions that retains the original variability of the data. What does this mean? Let's go back to linear regression.  
+  
+In their simplest form, linear regression models predict a y variable from an x variable, often coming in the form of $y=\beta_0+x\beta_1+\epsilon$. For most research objectives, this form (and its derivatives) seems to work just fine. In the multivariate case, however, we often want to explore several variables at once. We can use a technique called _Principal Components Analysis_ to reduce a set of $p$ variables into a minimal set of variables through a process called _eigenanalysis_. Let's briefly discuss this process so you have a better idea of how PCA works, and why it's effective.  
+  
+__Eigenanalysis: The Basics__  
+Consider a dataset you've collected at one of your study sites. Let this dataset have $p=4$ random variables, $v_1$, $v_2$, $v_3$, and $v_4$. We can express our dataset, $\bf{X}$, in the form $\bf{X} = c_1v_1+c_2v_2+c_3v_3+c_4v_4$. Clearly, this presents issues if we want to visualize and analyze our data. In the sense of a scatterplot, each variable represents a new dimension and now we have 4 dimensions. Eigenanalysis allows us to scale this 4-D coordinate system in 1, 2, or 3 dimensions. Let's break down some of the very basic elements of this process a bit further.  
+  
+\[
+\begin{matrix}
+\bf{X} = c_1v_1+c_2v_2+c_3v_3+c_4v_4\\
+We~want~to~express~our~data~in~linear~form~such~that~it~can~be~represented~as:\\
+Y=X\beta\\
+Essentially,~\beta~is~a~scaling~feature~that~takes~linear~combinations~of~all~of~our~variables\\
+and~makes~new~variables:~PC1,~PC2,~etc.,~yielding~the~form:\\
+Y_1=e_1X_1+\cdot\cdot\cdot+e_pX_p\\
+\cdot\\
+\cdot\\
+\cdot\\\
+Y_p=e_1X_1+\cdot\cdot\cdot+e_pX_p\\
+\end{matrix}
+\]  
+  
+We are not going to concern ourselves with how to calculate eigenvalues, as we can do this easily in R. Essentially each $Y_i$ is an _eigenvalue_ (AKA Principal Component) and each $e_i$ is an _eigenvector_ with p rows corresponding to p variables (essentially they are scale factors). Each $Y_i$ (formally presented as $\lambda_i$) is essentially a projection of all of the variables, scaled by their corresponding eigenvectors in a 1-dimensional subspace spanning the column space of the initial data matrix. This projection is what we see when we visualize a PCA using a biplot.  
+  
+Some notes on PCA:  
+  
+1. PCA is often referred to as a dimension reduction technique, though it is not a true method of dimension reduction. In reality, PCA is simply a projection method that attempts to summarize a large number of parameters (variables) into fewer dimensions.  
+  
+2. PCA should typically be done on standardized and centered variables (i.e. a correlation matrix). Often, variables in a dataset can vary in scale. This can overwhelm the PCA method and create situations where a single variable is driving the summarization. Obviously this is problematic and the sensitivity of this method to such problems warrants the use of correlation matrices in PCA.  
+  
+3. Eigenvalues and eigenvectors are not unique to PCA. Such values are used in a variety of other statistical approaches not covered here. Having a good sense of the role of eigenvalues and what they are will prepare you for a future that likely includes encountering them again.  
+  
+Let's dive in.  
+  
+``` {r PCA}
+library(tidyverse)
+# let's load in all of the data
+pd<-read.csv("/Users/alexthompson/Dropbox/PhD data/Stats stuff/Matt Tomaszewski/wrc/masterpd.csv")%>%
+  dplyr::mutate(psipd=abs(psipd))%>%
+  dplyr::mutate(psimd=abs(psimd))
+leaf<-read.csv("/Users/alexthompson/Dropbox/PhD data/Stats stuff/Matt Tomaszewski/wrc/leaftraits.csv")
+elements<-read.csv("/Users/alexthompson/Dropbox/PhD data/Stats stuff/Matt Tomaszewski/wrc/CN.csv")
+
+# run the PCA on just the water potential data
+pd_pca<-prcomp(pd[3:6],center=TRUE,scale.=TRUE)
+pd_summary<-as.data.frame(summary(pd_pca)$importance) #69% of the dat
+group<-pd$Group
+pd_plot<-ggbiplot(pd_pca,ellipse=TRUE,groups=group)
+
+# run PCA with combined leaf trait and water potential data
+lpd<-merge(leaf,pd)%>%
+  select(-date,-psidif)
+lpd_pca<-prcomp(lpd[8:13],center=TRUE,scale.=TRUE)
+lpd_summary<-as.data.frame(summary(lpd_pca)$importance) # 65% of the data with 2, 81% of the data with 3
+group<-lpd$Group
+lpd_plot<-ggbiplot(lpd_pca,ellipse=TRUE,groups=group)
+
+# run PCA on all of the data
+all<-merge(lpd,elements)%>%
+  select(-date,-C,-Ni,-CN,-N15,-fvfm)%>%
+  dplyr::rename(Microsite=Group)%>%
+  dplyr::mutate(Microsite=ifelse(Microsite=="High Closed Canopy","High Position - Closed Canopy",ifelse(Microsite=="High Exposed","High Position - Open Canopy",ifelse(Microsite=="Low Closed Canopy","Low Position - Closed Canopy",""))))%>%
+  dplyr::rename("\u03A8pd"=psipd)%>%
+  dplyr::rename("\u03A8md"=psimd)%>%
+  dplyr::rename("\u03C1chlorophyll"=chlcont)%>%
+  dplyr::rename(LMA=lma)%>%
+  dplyr::rename("Al:As"=huber)
+all_pca<-prcomp(all[8:13],center=TRUE,scale.=TRUE)
+all_summary<-as.data.frame(summary(all_pca)$importance) # 65% with 2; 79% with 3!
+group<-all$Microsite
+all_plot12<-ggbiplot(all_pca,choices=1:2,ellipse=TRUE,groups=group)
+all_plot13<-ggbiplot(all_pca,choices=c(1,3),ellipse=TRUE,groups=group)
+all_plot14<-ggbiplot(all_pca,choices=c(1,4),ellipse=TRUE,groups=group)
+all_plot15<-ggbiplot(all_pca,choices=c(1,5),ellipse=TRUE,groups=group)
+
+# obviously adding more variables isn't making things better
+# let's look at the elemental analysis alone
+elmnt_pca<-prcomp(elements[3:7],center=TRUE,scale.=TRUE)
+elmnt_summary<-as.data.frame(summary(elmnt_pca)$importance) # 71% of the data with 2
+group<-elements$Group
+elmnt_plot<-ggbiplot(elmnt_pca,ellipse=TRUE,groups=group)
+
+
+# it looks like the PCA on uncorrelated variables is best
+# let's make a table and inspect it a little bit
+allpca_kab<-kbl(all_pca$rotation,align='c',table.attr = "style = \"color: black;\"",caption="Predawn, Leaf, & Element Traits",digits=2)%>%
+    kable_classic(full_width = T, html_font = "Cambria")%>%
+    kable_styling(font_size = 20)
+
+```
+  
+Clearly things are complicated with PCA. It seems to be most effective with a subset of the full dataset. This should make it clear that it isn't really a dimension reduction method. What's happening? This is called the __Curse of Dimensionality__.  
+  
+We have p variables, and that p can be large or small relative to n. As we progressively add variables and p increases, the dimension of the sample space is increasing. This effectively pulls observations apart as variance tends to increase (things get more spread out!). As this distance between observations increases, it becomes more difficult to summarize all of the variables in just a subset of the sample space. This is called the curse of dimensionality and is a huge problem in inference and prediction. We won't dive into this here, but this (SOURCE) resource explains things quite well.  
+  
+__Conclusion__  
+Multivariate analysis can be an important tool in ecology. It has been used for many years (see the work of P.C. Eilou for early use of ordination methods in ecology), and will certainly be used for many more to come. As ecologists we often deal with very small sample sizes (field work is hard!) in high dimensional settings. This can be problematic and we shouldn't expect multivariate analysis to solve such problems as the curse of dimensionality. Prior to any statistical approach, it's the job of the researcher to carefully consider which variables are important. As we saw with the PCA data, this was clearly an issue and it extends to clustering, classification, and canonical correlation.  
+While we only covered a few subjects here, mostly regarding statistical _inference_, many multivariate methods have been developed for prediction. Many of us use predictive models in some capacity to conduct our research. Even if we don't consider ourselves _modelers_, models are frequently used in the literature. Our hope is that the techniques we've introduced you to here will aid you in understanding, developing, testing, or even critiquing models in your field. With these tools you've been provided here, you should be ready to employ simple linear multivariate statistical methods on your own data, and even explore more complex approaches later.  
+
+
+
