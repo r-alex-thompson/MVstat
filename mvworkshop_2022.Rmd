@@ -35,7 +35,7 @@ Let us check for correlations in our data.
 cor(iris[1:4])
 ```
   
-It appears that most of our variables are correlated, which limits what may include in a regression model. However, what if we want to test how a set of multiple variables correlates with another set of multiple variables? In mathematical terms, we split our data into two (not necessarily equally sized!) matrices: $\textbf{p}_1$ and $\textbf{p}_2$. Although the number of variables in each of the $\textbf{p}_i$ matrices can be unequal, the number of observations must be equal for the analysis to work.  
+It appears that most of our variables are correlated, which limits what we may include in a regression model. However, what if we want to test how a set of multiple variables correlates with another set of multiple variables? In mathematical terms, we split our data into two (not necessarily equally sized!) matrices: $\textbf{p}_1$ and $\textbf{p}_2$. Although the number of variables in each of the $\textbf{p}_i$ matrices can be unequal, the number of observations must be equal for the analysis to work.  
   
 We are now ready to introduce our first technique, _Canonical Correlation_. INSERT INFO ABOUT CANONICAL CORR.
   
@@ -59,7 +59,7 @@ Let's start with Classification. INSERT INFO ABOUT CLASSIFICATION.
   
 Clearly, _Classification_ requires some a priori knowledge about our data. Furthermore, it's strength comes in classifying _new_ observations. But what if we don't have new observations and we just want to group our existing observations? Well, this is where _Clustering_ algorithms can help. Clustering algorithms are highly effective mathematical tools that leverage concepts of distance between points in multiple dimensions ($p\ge1$) to find the best groups. Sometimes our data makes this easy. Sometimes it is not.  
   
-There are many different algorithms that can be used in clustering. These include hierarchical methods like single linkage or average linkage. What we're going to cover here is the k-means algorithm which is widely used across many fields. The basic idea is to imagine a moving window across all of your data points. This window is calculating the distance between points and clustering them based on minimum distances. Essentially, you specify k clusters (k = 1, 2, 3, etc.) and run the algorithm. The distance of each observation is compared the average distance of each of the k clusters. The points in each cluster are shuffled based on this algorithm until the within-cluster distance is minimized while the between-cluster distance is maximized. The basic idea is this: group observations in such a way that a maximum amount of the variance in the dataset is captured within a minimum number of groups. 
+There are many different algorithms that can be used in clustering. These include hierarchical methods like single linkage or average linkage. What we're going to cover here is the k-means algorithm which is widely used across many fields. The basic idea is to imagine a moving window across all of your data points. This window is calculating the distance between points and clustering them based on minimum distances. Essentially, you specify k clusters (k = 1, 2, 3, etc.) and run the algorithm. The distance of each observation is compared the average distance of each of the k clusters. The points in each cluster are shuffled based on this algorithm until the within-cluster distance is minimized while the between-cluster distance is maximized. Intuitively this makes sense - we group close observations together and maximize the distance between the (fewest number of) groups.
   
 Let us take the _iris_ data make an attempt at clustering it.
   
@@ -120,7 +120,7 @@ Y_p=e_1X_1+\cdot\cdot\cdot+e_pX_p\\
 \end{matrix}
 \]  
   
-We are not going to concern ourselves with how to calculate eigenvalues, as we can do this easily in R. Essentially each $Y_i$ is an _eigenvalue_ (AKA Principal Component) and each $e_i$ is an _eigenvector_ with p rows corresponding to p variables (essentially they are scale factors). Each $Y_i$ (formally presented as $\lambda_i$) is essentially a projection of all of the variables, scaled by their corresponding eigenvectors in a 1-dimensional subspace spanning the column space of the initial data matrix. This projection is what we see when we visualize a PCA using a biplot.  
+We are not going to concern ourselves with how to calculate eigenvalues, as we can do this easily in R. _(Note: for those interested, this stackexchange comment (https://stats.stackexchange.com/questions/220243/the-proof-of-shrinking-coefficients-using-ridge-regression-through-spectral-dec) gives a really great and intuitive explanation of eigenvalues using spectral decomposition. I find the explanation pretty intuitive and informative, and hopefully it helps you too.)_ Essentially each $Y_i$ is an _eigenvalue_ (AKA Principal Component) and each $e_i$ is an _eigenvector_ with p rows corresponding to p variables (essentially they are scale factors). Each $Y_i$ (formally presented as $\lambda_i$) is essentially a projection of all of the variables, scaled by their corresponding eigenvectors in a 1-dimensional subspace spanning the column space of the initial data matrix. This projection is what we see when we visualize a PCA using a biplot.  
   
 Some notes on PCA:  
   

@@ -1,0 +1,74 @@
+﻿date,tree,wetm,drym,bagm,deltam,GWC,Group,position,canopy
+6/18/2021,1,5.687,3.698,1.806,1.989,1.051268499,High Exposed,high,exposed
+6/18/2021,2,5.346,3.573,1.815,1.773,1.008532423,High Exposed,high,exposed
+6/18/2021,3,2.865,2.211,1.832,0.654,1.725593668,High Exposed,high,exposed
+6/18/2021,4,5.72,3.49,1.83,2.23,1.343373494,High Exposed,high,exposed
+6/18/2021,5,7.539,4.482,1.803,3.057,1.141097424,High Exposed,high,exposed
+6/18/2021,6,4.015,2.893,1.826,1.122,1.051546392,Low Closed Canopy,low,closed
+6/18/2021,7,4.458,2.781,1.189,1.677,1.05339196,Low Closed Canopy,low,closed
+6/18/2021,9,4.117,2.798,1.799,1.319,1.32032032,Low Closed Canopy,low,closed
+6/18/2021,10,3.265,2.412,1.824,0.853,1.450680272,Low Closed Canopy,low,closed
+6/18/2021,11,3.261,2.361,1.796,0.9,1.592920354,High Closed Canopy,high,closed
+6/18/2021,12,3.571,2.435,1.817,1.136,1.838187702,High Closed Canopy,high,closed
+6/18/2021,13,4.389,3.002,1.795,1.387,1.149130075,High Closed Canopy,high,closed
+6/18/2021,14,3.846,2.682,1.805,1.164,1.327251995,High Closed Canopy,high,closed
+6/18/2021,15,3.42,2.391,1.799,1.029,1.738175676,High Closed Canopy,high,closed
+7/14/2021,1,3.676,2.58,1.81,1.096,1.423376623,High Exposed,high,exposed
+7/14/2021,2,6.381,3.683,1.76,2.698,1.403016121,High Exposed,high,exposed
+7/14/2021,3,6.437,3.705,1.764,2.732,1.407521896,High Exposed,high,exposed
+7/14/2021,4,7.218,4.256,1.773,2.962,1.1929118,High Exposed,high,exposed
+7/14/2021,5,6.767,3.685,1.788,3.082,1.624670532,High Exposed,high,exposed
+7/14/2021,6,3.047,2.213,1.756,0.834,1.824945295,Low Closed Canopy,low,closed
+7/14/2021,7,6.162,3.659,1.772,2.503,1.326444091,Low Closed Canopy,low,closed
+7/14/2021,8,5.746,3.228,1.744,2.518,1.696765499,Low Closed Canopy,low,closed
+7/14/2021,9,5.085,3.097,1.733,1.988,1.457478006,Low Closed Canopy,low,closed
+7/14/2021,10,3.591,2.512,1.741,1.079,1.399481193,Low Closed Canopy,low,closed
+7/14/2021,11,4.411,3.013,1.749,1.398,1.106012658,High Closed Canopy,high,closed
+7/14/2021,12,3.271,2.341,1.758,0.93,1.595197256,High Closed Canopy,high,closed
+7/14/2021,13,4.501,2.852,1.761,1.649,1.511457379,High Closed Canopy,high,closed
+7/14/2021,14,4.753,3.096,1.769,1.657,1.248681236,High Closed Canopy,high,closed
+7/14/2021,15,3.957,2.666,1.776,1.291,1.450561798,High Closed Canopy,high,closed
+8/7/2021,1,4.582,2.961,1.779,1.621,1.371404399,High Exposed,high,exposed
+8/7/2021,2,7.444,4.172,1.812,3.272,1.386440678,High Exposed,high,exposed
+8/7/2021,3,5.9,3.497,1.785,2.403,1.403621495,High Exposed,high,exposed
+8/7/2021,4,6.5,3.941,1.778,2.559,1.183079057,High Exposed,high,exposed
+8/7/2021,5,6.613,3.812,1.773,2.801,1.373712604,High Exposed,high,exposed
+8/7/2021,6,4.14,2.741,1.773,1.399,1.445247934,Low Closed Canopy,low,closed
+8/7/2021,7,3.728,2.602,1.799,1.126,1.402241594,Low Closed Canopy,low,closed
+8/7/2021,8,3.551,2.443,1.763,1.108,1.629411765,Low Closed Canopy,low,closed
+8/7/2021,9,3.143,2.363,1.799,0.78,1.382978723,Low Closed Canopy,low,closed
+8/7/2021,10,2.972,2.234,1.767,0.738,1.580299786,Low Closed Canopy,low,closed
+8/7/2021,11,3.834,2.692,1.785,1.142,1.259095921,High Closed Canopy,high,closed
+8/7/2021,12,3.725,2.604,1.78,1.121,1.360436893,High Closed Canopy,high,closed
+8/7/2021,13,4.299,3.039,1.825,1.26,1.037891269,High Closed Canopy,high,closed
+8/7/2021,14,4.628,3.109,1.81,1.519,1.169361047,High Closed Canopy,high,closed
+8/7/2021,15,4.453,2.853,1.789,1.6,1.503759398,High Closed Canopy,high,closed
+8/30/2021,1,5.326,3.431,1.79,1.895,1.154783668,High Exposed,high,exposed
+8/30/2021,2,7.328,4.214,1.82,3.114,1.30075188,High Exposed,high,exposed
+8/30/2021,3,4.752,3.045,1.797,1.707,1.367788462,High Exposed,high,exposed
+8/30/2021,4,5.199,3.367,1.782,1.832,1.155835962,High Exposed,high,exposed
+8/30/2021,5,6.837,4.048,1.814,2.789,1.248433303,High Exposed,high,exposed
+8/30/2021,6,4.393,2.904,1.839,1.489,1.398122066,Low Closed Canopy,low,closed
+8/30/2021,7,3.033,2.287,1.793,0.746,1.510121457,Low Closed Canopy,low,closed
+8/30/2021,8,4.066,2.709,1.772,1.357,1.448239061,Low Closed Canopy,low,closed
+8/30/2021,9,2.911,2.293,1.784,0.618,1.214145383,Low Closed Canopy,low,closed
+8/30/2021,10,2.846,2.176,1.753,0.67,1.58392435,Low Closed Canopy,low,closed
+8/30/2021,11,5.039,3.303,1.802,1.736,1.156562292,High Closed Canopy,high,closed
+8/30/2021,12,3.274,2.443,1.779,0.831,1.251506024,High Closed Canopy,high,closed
+8/30/2021,13,4.746,3.131,1.784,1.615,1.198960653,High Closed Canopy,high,closed
+8/30/2021,14,3.808,2.683,1.807,1.125,1.284246575,High Closed Canopy,high,closed
+9/29/2021,1,2.341,2.824,1.782,1.299,1.246641075,High Exposed,high,exposed
+9/29/2021,2,5.679,4.233,1.785,3.231,1.319852941,High Exposed,high,exposed
+9/29/2021,3,1.373,2.364,1.779,0.788,1.347008547,High Exposed,high,exposed
+9/29/2021,4,5.547,4.49,1.785,2.842,1.05064695,High Exposed,high,exposed
+9/29/2021,5,5.205,4.132,1.799,2.872,1.231033005,High Exposed,high,exposed
+9/29/2021,6,1.337,2.364,1.772,0.745,1.258445946,Low Closed Canopy,low,closed
+9/29/2021,7,4.125,3.61,1.761,2.276,1.230935641,Low Closed Canopy,low,closed
+9/29/2021,8,1.652,2.519,1.836,0.969,1.418740849,Low Closed Canopy,low,closed
+9/29/2021,9,2.993,3.212,1.782,1.563,1.093006993,Low Closed Canopy,low,closed
+9/29/2021,10,2.823,3.107,1.799,1.515,1.158256881,Low Closed Canopy,low,closed
+9/29/2021,11,2.685,3.077,1.791,1.399,1.087869362,High Closed Canopy,high,closed
+9/29/2021,12,4.687,4.125,1.78,2.342,0.998720682,High Closed Canopy,high,closed
+9/29/2021,13,6.362,4.953,1.8,3.209,1.017760863,High Closed Canopy,high,closed
+9/29/2021,14,3.379,3.454,1.823,1.748,1.071735132,High Closed Canopy,high,closed
+9/29/2021,15,3.375,3.396,1.817,1.796,1.137428752,High Closed Canopy,high,closed
