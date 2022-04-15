@@ -1,17 +1,24 @@
 ---
 title: "Multivariate Analysis Workshop"
 author: "R. Alex Thompson & Madeline Franz"
-date: "3/1/2022"
+date: "4/11/2022"
 output: pdf_document
 ---
 
 Welcome to the Multivariate Statistics in Ecology and Earth Sciences Workshop 2022. The central aims of this workshop are: (i) introduce attendees to the basic principles behind various multivariate methods, (ii) outline a general strategy for deciding if a multivariate approach is best for your data, and (iii) work through examples of multivariate analysis in R, providing sample code and data for future exploration and learning.  
   
 __Overview of Multivariate Analysis and Multivariate Data__  
-  
+Technological advances have made it easier for researchers to measure many more variables at once than has been historically possible. Multivariate data lets us view a study system from a variety of perspectives (re: dimensions) and has helped us to learn a great deal about natural systems in the process. Yet, without multivariate analysis, it would be difficult to make sense of all of how these different puzzle pieces all fit together. Examples of this include coordinated trait responses, variable interactions, contrasts, and latent effects. Put simply, multivariate analysis can be thought of as a tool that allows us to examine all of the puzzle pieces at once to find those which fit "best" among all possible combinations.
+
 __Why Multivariate Analysis__  
+So, why multivariate analysis? The archetypal scientist might just as well argue for evaluating correlations among variables one-by-one. This technique might work for some variables (i.e. photoperiod and plant growth) but not so well for other variables that are clearly coupled (i.e. growth and photosynthesis).  In the latter example, latent, hidden effects that we can't (or simply don't) measure or account for are responsible for driving relationships. This is a classic example of Gestalt: the whole is greater than the sum of its parts. Multivariate analysis is like a peak behind the curtain, letting us look at how different combinations or groups of variables affect another variable. More importantly, multivariate analysis can let us look at how multiple variables affect multiple other variables.  
   
-__When To Use Multivariate Analysis (and When Not To)__
+Another example is how observations might group themselves. As humans, we like to categorize or cluster things we see in nature. Species, clouds, rocks, etc. While these categories can be useful for making sense of the world, it is often the case that nature doesn't care about our tidy categories. More often than not, we are interested in the cases where nature breaks our rules. How then, can we group phenomena more heuristically? The answer is found in multivariate analysis and we specifically address these examples in this tutorial. To understand how we can do this, the next section sets the stage for a geometric understanding of multivariate analysis.  
+  
+  
+__When To Use Multivariate Analysis (and When Not To)__  
+While multivariate analysis can be an incredibly powerful tool, it can also be misused. How do we exploit the power of multivariate statistics, while avoiding some of these misuses? The first step is to evaluate whether or not your data is a good fit for the technique at hand. Once you think you have data that might benefit from a multivariate analysis, use the table below to check which of the methods we walk through in this course are a good candidate. Most modern statistical methods use multivariate perspectives and this is in no way a comprehensive guide but rather a "How to" for getting started.  
+
   
 __How to use Multivariate Analysis__  
 In this tutorial, we will introduce you to four methods used in multivariate statistics: Canonical Correlation, Clustering Algorithms, Classification, and Ordination (Principal Components Analysis). In order to illustrate these techniques in the simplest way, we have chosen to use the infamous _iris_ dataset provided in RStudio. This dataset, while simple, is very well-behaved. While we seldom have well-behaved data in practice, this makes teaching multivariate methods much easier. Not only will the basic principles of multivariate analysis become more clear, but our ability to make conclusions will be simplified. This is in line with aim (i), and is the motivating aim of this tutorial.    
@@ -42,10 +49,41 @@ We are now ready to introduce our first technique, _Canonical Correlation_. INSE
 Before we can do anything, however, it's best to scale and center our data. What does this mean? In short, if some of our variables have more variance than others, or are measured at a different scale (i.e. values are in the 100s versus 10s), this can create issues with multivariate techniques. A fundamental component of any multivariate analysis is the concept of distance. If one variable has greater variance than the other variables, it is likely that your results will be strongly influenced by this single variable. Obviously, this is bad. To correct for this we can use R's built in scale and center functions to give our data unit variance - essentially homogenizing the variance of each column so that they are equally weighted in the calculations.  
   
 ``` {r scale and center}
-
+iris_scale<-scale(iris[1:4])
 ```
   
 ``` {r canonical correlation}
+#Install packages
+library(CCA) #for canonical correlations
+library(CCP) #to assess statistical significance of canonical correlations
+
+#Canonical Correlation
+##Select the variables to be used in each of the two categories
+sepal <- iris[,c(1:2)]
+petal <-iris[,c(3:4)]
+
+matcor(sepal, petal) #displays correlations within and between categories
+iris_cc <- cc(sepal, petal)#this function performs the canonical correlation analysis
+
+# display the canonical correlations
+iris_cc$cor
+
+# raw canonical coefficients
+iris_cc[3:4]
+
+# compute canonical loadings
+iris_cc2 <- comput(sepal, petal, iris_cc)
+
+# display canonical loadings
+iris_cc2[3:6]
+
+rho <- iris_cc$cor #make a vector of the canonical correlation coefficients
+
+n <- dim(sepal)[1] #number of observations of each variable
+p <- length(sepal) #number of 'independent' variables
+q <- length(petal) #number of 'dependent' variables
+
+p.asym(rho, n, p, q, tstat = 'Wilks') #specify test statistic to be used. could also use Hotelling, Pillai or Roy
 
 ```
   
@@ -54,14 +92,56 @@ Often, we want to group our data. While grouping can be done a priori during the
 Let's start with Classification. INSERT INFO ABOUT CLASSIFICATION.  
   
 ``` {r classification}
+library(MASS)
+library(ggplot2)
 
+#make this example reproducible
+set.seed(666)
+
+#Here we split the data into training and testing sets. We use 70% of dataset as training set (randomly selected) and the remaining 30% as testing set
+sample <- sample(c(TRUE, FALSE), nrow(iris), replace=TRUE, prob=c(0.7,0.3)) #select 70% of the rows/observations
+train <- iris[sample, ] #the selected 70% become the training data
+test <- iris[!sample, ] #everything not selected (30%) becomes testing data
+
+#fit the linear discriminant analysis model on the training data
+iris_lda <- lda(Species~., data=train)
+
+#view model output
+iris_lda
+
+#use LDA model to make predictions on test data
+predicted <- predict(iris_lda, test)#here the predictions are made
+
+mean(predicted$class==test$Species)#here we test the predictions by comparing them to the known species to determine if the predictions are correct
+missclass <- predicted$class==test$Species #here we can see which predictions are missclassified (show up as 'FALSE')
+
+#define data to plot
+lda_train_plot <- cbind(train, predict(iris_lda)$x) #adds 2 columns of discriminants to the training points
+lda_test_plot <- cbind(test, predicted$x) #adds 2 columns of discriminants to the testing points
+
+miss_dat <- cbind(lda_test_plot, missclass) #adds the 'misclassification' true/false to the testing points
+lda_miss_plot <- miss_dat[missclass==FALSE,] #selects only the rows that were missclassified
+
+#create plot
+ggplot(lda_train_plot, aes(LD1, LD2)) + #initiates the plot and sets axes based on the linear discriminats
+  geom_point(aes(color = Species)) + #adds the training points to the graph, colored by their species
+    geom_point(data = lda_test_plot, aes(color = Species)) + #adds testing points to the graph, colored by their actual species
+      geom_point(data = lda_miss_plot, shape=4) #puts an 'x' over the misclassified points
 ```
   
 Clearly, _Classification_ requires some a priori knowledge about our data. Furthermore, it's strength comes in classifying _new_ observations. But what if we don't have new observations and we just want to group our existing observations? Well, this is where _Clustering_ algorithms can help. Clustering algorithms are highly effective mathematical tools that leverage concepts of distance between points in multiple dimensions ($p\ge1$) to find the best groups. Sometimes our data makes this easy. Sometimes it is not.  
   
-There are many different algorithms that can be used in clustering. These include hierarchical methods like single linkage or average linkage. What we're going to cover here is the k-means algorithm which is widely used across many fields. The basic idea is to imagine a moving window across all of your data points. This window is calculating the distance between points and clustering them based on minimum distances. Essentially, you specify k clusters (k = 1, 2, 3, etc.) and run the algorithm. The distance of each observation is compared the average distance of each of the k clusters. The points in each cluster are shuffled based on this algorithm until the within-cluster distance is minimized while the between-cluster distance is maximized. Intuitively this makes sense - we group close observations together and maximize the distance between the (fewest number of) groups.
+__K-means__
+There are many different algorithms that can be used in clustering. These include hierarchical methods like single linkage or average linkage. What we're going to cover here is the k-means algorithm which is widely used across many fields. The basic idea is to imagine a moving window across all of your data points. This window is calculating the distance between points and clustering them based on minimum distances. Essentially, you specify k clusters (k = 1, 2, 3, etc.) and run the algorithm. The distance of each observation is compared the average distance of each of the k clusters. The points in each cluster are shuffled based on this algorithm until the within-cluster distance is minimized while the between-cluster distance is maximized. Intuitively this makes sense - we group close observations together and maximize the distance between the (fewest number of) groups.  
+  
+_K-means algorithm_  
+_1. Specify the number of K clusters_  
+_2. Randomly shuffle K observations into K clusters to find the initial centroids_  
+_3. For every observation, compute the sum of squared distances from initial centroids and assign to closest cluster_  
+_4  Repeat 2 & 3 until within cluster sum of squared distances is minimized, and between cluster sum of squared distances is maximized_  
   
 Let us take the _iris_ data make an attempt at clustering it.
+  
   
 ``` {r clustering}
 k2<-kmeans(iris[1:4],centers=2) # run the kmeans algorithm included in R
@@ -130,7 +210,39 @@ Some notes on PCA:
   
 3. Eigenvalues and eigenvectors are not unique to PCA. Such values are used in a variety of other statistical approaches not covered here. Having a good sense of the role of eigenvalues and what they are will prepare you for a future that likely includes encountering them again.  
   
+4. R has two functions for PCA: prcomp() and princomp(). Each method employs different approaches for finding the PCAs but the function prcomp() is typically the preferred method due to greater accuracy. However, in practice, you shouldn't really notice any difference.  
+  
 Let's dive in.  
+  
+  
+First, we'll start with a very simple PCA using the Iris dataset.  
+  
+``` {r PCA iris}
+library(tidyverse)
+library(ggbiplot)
+
+
+# run a PCA on the iris data 
+# we set center = TRUE and scale = TRUE to make sure the variance of one variable doesn't overpower the analysis and give weird results
+iris_pca<-prcomp(iris[1:4],center=TRUE,scale=TRUE)
+# let's look at our results
+summary(iris_pca)
+# it looks like 95% of the variance in the data can be explained with just two components!
+iris_pca # This line of code let's us look into how each variable changes along each PC
+
+
+# Now, let's plot it and see what it looks like
+ggbiplot(iris_pca,choices=1:2,scale=0.05)
+
+# we can also color the points by species to see if our groups are clustering by species
+ggbiplot(iris_pca,choices=1:2,scale=0.05,groups=iris$Species)
+
+# It looks like species are definitely breaking out along PC1
+# Remember our k-means clusters above? Let's bring that data in and see if our clusters do the same thing
+ggbiplot(iris_pca,choices=1:2,scale=0.05,groups=iris2$group)
+```
+  
+Now, let's use some more complicated data and show how things can get weird and beautiful.  
   
 ``` {r PCA}
 library(tidyverse)
